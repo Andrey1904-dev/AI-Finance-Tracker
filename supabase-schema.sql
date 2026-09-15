@@ -26,11 +26,13 @@ create table if not exists public.finance_profiles (
   recurring jsonb not null default '[]'::jsonb,
   accounts jsonb not null default '[]'::jsonb,
   credits jsonb not null default '[]'::jsonb,
+  credit_cards jsonb not null default '[]'::jsonb,
   categories jsonb not null default '{"expense":["Продукты","Транспорт","Жильё","Кафе и рестораны","Покупки","Здоровье","Развлечения","Связь","Образование","Подписки","Другое"],"income":["Зарплата","Подработка","Подарки","Возврат","Продажа","Инвестиции","Другое"]}'::jsonb,
   updated_at timestamptz not null default now()
 );
 
 alter table public.finance_profiles add column if not exists credits jsonb not null default '[]'::jsonb;
+alter table public.finance_profiles add column if not exists credit_cards jsonb not null default '[]'::jsonb;
 alter table public.finance_profiles add column if not exists categories jsonb not null default '{"expense":["Продукты","Транспорт","Жильё","Кафе и рестораны","Покупки","Здоровье","Развлечения","Связь","Образование","Подписки","Другое"],"income":["Зарплата","Подработка","Подарки","Возврат","Продажа","Инвестиции","Другое"]}'::jsonb;
 
 alter table public.finance_operations enable row level security;
@@ -110,3 +112,17 @@ create table if not exists public.telegram_accounts (
 );
 alter table public.telegram_accounts enable row level security;
 create policy "Users view own telegram account" on public.telegram_accounts for select using (auth.uid() = user_id);
+
+-- Telegram interactive bot session state (idempotent migration)
+create table if not exists public.telegram_sessions (
+  telegram_chat_id text primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  state jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.telegram_sessions enable row level security;
+drop policy if exists "Users view own telegram sessions" on public.telegram_sessions;
+create policy "Users view own telegram sessions"
+  on public.telegram_sessions for select
+  using (auth.uid() = user_id);
