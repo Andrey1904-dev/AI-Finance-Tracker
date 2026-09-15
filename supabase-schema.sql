@@ -88,3 +88,20 @@ drop trigger if exists on_auth_user_created_finance_profile on auth.users;
 create trigger on_auth_user_created_finance_profile
 after insert on auth.users
 for each row execute procedure public.handle_new_user_profile();
+
+create table if not exists public.telegram_link_codes (
+  code text primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  expires_at timestamptz not null
+);
+alter table public.telegram_link_codes enable row level security;
+create policy "Users manage own telegram link codes" on public.telegram_link_codes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create table if not exists public.telegram_accounts (
+  telegram_chat_id text primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  username text,
+  created_at timestamptz not null default now()
+);
+alter table public.telegram_accounts enable row level security;
+create policy "Users view own telegram account" on public.telegram_accounts for select using (auth.uid() = user_id);

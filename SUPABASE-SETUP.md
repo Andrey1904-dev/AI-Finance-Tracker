@@ -33,3 +33,24 @@ Add the same URL to the Redirect URLs if Supabase asks for it.
 - data is isolated by Supabase `auth.uid()` + RLS.
 
 The publishable Supabase key is embedded in the frontend by design. Never put a `service_role`/secret key into `index.html`.
+
+## Telegram integration
+
+1. Run the updated `supabase-schema.sql`.
+2. Install Supabase CLI and link the project.
+3. Deploy the function:
+
+```bash
+supabase functions deploy telegram-webhook --no-verify-jwt
+supabase secrets set TELEGRAM_BOT_TOKEN="YOUR_NEW_BOT_TOKEN"
+supabase secrets set SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
+```
+
+4. Set the webhook (replace `PROJECT_REF`):
+
+```bash
+curl -X POST "https://api.telegram.org/botYOUR_NEW_BOT_TOKEN/setWebhook" \
+  -d "url=https://PROJECT_REF.supabase.co/functions/v1/telegram-webhook"
+```
+
+5. In the app open Settings → Telegram, generate a code, then send the bot `/link CODE`.
