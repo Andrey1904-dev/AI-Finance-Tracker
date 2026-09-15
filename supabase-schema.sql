@@ -25,8 +25,13 @@ create table if not exists public.finance_profiles (
   goals jsonb not null default '[]'::jsonb,
   recurring jsonb not null default '[]'::jsonb,
   accounts jsonb not null default '[]'::jsonb,
+  credits jsonb not null default '[]'::jsonb,
+  categories jsonb not null default '{"expense":["Продукты","Транспорт","Жильё","Кафе и рестораны","Покупки","Здоровье","Развлечения","Связь","Образование","Подписки","Другое"],"income":["Зарплата","Подработка","Подарки","Возврат","Продажа","Инвестиции","Другое"]}'::jsonb,
   updated_at timestamptz not null default now()
 );
+
+alter table public.finance_profiles add column if not exists credits jsonb not null default '[]'::jsonb;
+alter table public.finance_profiles add column if not exists categories jsonb not null default '{"expense":["Продукты","Транспорт","Жильё","Кафе и рестораны","Покупки","Здоровье","Развлечения","Связь","Образование","Подписки","Другое"],"income":["Зарплата","Подработка","Подарки","Возврат","Продажа","Инвестиции","Другое"]}'::jsonb;
 
 alter table public.finance_operations enable row level security;
 alter table public.finance_profiles enable row level security;
