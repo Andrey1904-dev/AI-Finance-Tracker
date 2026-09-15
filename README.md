@@ -1,42 +1,29 @@
 # FinTrack AI
 
-Modern browser-based personal finance tracker with Supabase cloud storage and email authentication.
+Премиальный персональный финансовый трекер с веб-приложением, Supabase и Telegram-ботом.
 
-## Features
+## Возможности
 
-- 🔐 Email registration and login
-- 🔑 Password reset
-- ☁️ Supabase-only data storage — no localStorage fallback
-- 💸 Income and expense tracking
-- 📊 Dashboard and analytics
-- 🎯 Financial goals
-- 📋 Category budgets
-- 🔁 Recurring payments
-- 💳 Accounts and wallets
-- ✈️ Telegram AI demo interface
-- 📤 JSON / CSV export and import
-- 📱 Responsive layout for desktop and iPhone
-- 🛡️ Supabase Row Level Security: each account sees only its own data
+- учёт доходов и расходов;
+- автоматическое распознавание сообщений в Telegram;
+- пользовательские категории;
+- категория **«Мобильный оператор»** с распознаванием сообщений вроде `билайн 900`;
+- аналитика, бюджеты и финансовые цели;
+- счета и повторяющиеся платежи;
+- кредиты с расчётом платежа и остатка;
+- кредитные карты с лимитом, задолженностью, доступным остатком, загрузкой лимита и минимальным платежом;
+- уведомления Telegram о платежах по кредитам и кредиткам;
+- статистика за день и месяц;
+- экспорт JSON/CSV и импорт резервной копии;
+- синхронизация сайта и Telegram через Supabase.
 
-## Deploy
+## Деплой функций
 
-The project is static and requires no Node.js build step.
+```bash
+supabase functions deploy telegram-webhook --no-verify-jwt
+supabase functions deploy credit-reminders --no-verify-jwt
+```
 
-1. Run `supabase-schema.sql` in Supabase SQL Editor.
-2. Enable the Email authentication provider.
-3. Configure the GitHub Pages URL in Supabase Authentication → URL Configuration.
-4. Upload `index.html` and the static assets to GitHub Pages.
+## Важно
 
-Detailed instructions are in `SUPABASE-SETUP.md`.
-
-
-## Новое: кредиты, категории и Telegram-напоминания
-- Несколько кредитов на одного пользователя.
-- Банк, назначение, сумма, ставка, срок, дата оформления и ближайший платёж.
-- Ориентировочный расчёт ежемесячного платежа и остатка основного долга.
-- Кредиты отображаются в календаре.
-- Telegram-напоминания за 3 дня, за 2 дня, за 1 день, в день платежа и после просрочки — до отметки оплаты.
-- Удаление отдельных расходов и доходов.
-- Пользовательские категории расходов и доходов с переименованием/удалением/добавлением.
-- Telegram `/categories` использует категории конкретного пользователя.
-- Telegram `/credits` показывает кредиты пользователя.
+Токены и секреты не хранятся в клиентском коде. Используйте Supabase Secrets для токена Telegram и секрета напоминаний.
